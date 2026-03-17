@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <base href="/kkl2026/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>끌림 - 지금 근처의 인연</title>
@@ -2130,8 +2131,8 @@ async function checkTeamMatch() {
     window.openChat = openChat;
     
     window.goBack = goBack;
-    window.addEventListener('popstate', () => { if(document.getElementById('chatSection').classList.contains('active')) { showSection(previousSection); history.pushState(null, '', '/'); } });
-    history.pushState(null, '', '/');
+    window.addEventListener('popstate', () => { if(document.getElementById('chatSection').classList.contains('active')) { showSection(previousSection); // history.pushState(null, '', '/'); } });
+    // history.pushState(null, '', '/');
     checkInviteLink();
     window.sendMsg = sendMsg;
     window.showNotify = showNotify;
