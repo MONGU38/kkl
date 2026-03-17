@@ -2131,7 +2131,7 @@ async function checkTeamMatch() {
     window.openChat = openChat;
     
     window.goBack = goBack;
-    window.addEventListener('popstate', () => { if(document.getElementById('chatSection').classList.contains('active')) { showSection(previousSection); // history.pushState(null, '', '/'); } });
+    window.addEventListener('popstate', () => { if(document.getElementById('chatSection').classList.contains('active')) { showSection(previousSection); } });
     // history.pushState(null, '', '/');
     checkInviteLink();
     window.sendMsg = sendMsg;
