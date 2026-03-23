@@ -1149,7 +1149,7 @@
                     <div class="radar-center"></div>
                     <!-- 유저 점들 동적 생성 -->
                 </div>
-                <div class="radar-status" id="radarStatus">📡 위치 수신 중...</div>
+                <div class="radar-status" id="radarStatus">하단 탭에 있는 📡 레이더 버튼을 한 번 클릭하세요!</div>
                 <div class="radar-count" id="radarCount"></div>
             </div>
 
@@ -1161,9 +1161,13 @@
 
         <!-- 하단 탭바 -->
         <div class="tab-bar">
-            <button class="tab-item active" onclick="switchTab('main',this)">
+            <button class="tab-item active" onclick="switchTab('main',this); loadNearby(10)">
                 <span class="tab-icon">📡</span>
-                <span class="tab-label">레이더</span>
+                <span class="tab-label">10분레이더</span>
+            </button>
+            <button class="tab-item" onclick="switchTab('main',this); loadNearby(0.5)">
+                <span class="tab-icon">🔴</span>
+                <span class="tab-label">실시간 레이더</span>
             </button>
             <button class="tab-item" onclick="switchTab('team',this)">
                 <span class="tab-icon">👥</span>
@@ -1200,9 +1204,13 @@
 
         <!-- 하단 탭바 -->
         <div class="tab-bar">
-            <button class="tab-item" onclick="switchTab('main',this)">
+            <button class="tab-item" onclick="switchTab('main',this); loadNearby(10)">
                 <span class="tab-icon">📡</span>
-                <span class="tab-label">레이더</span>
+                <span class="tab-label">10분레이더</span>
+            </button>
+            <button class="tab-item" onclick="switchTab('main',this); loadNearby(0.5)">
+                <span class="tab-icon">🔴</span>
+                <span class="tab-label">실시간 레이더</span>
             </button>
             <button class="tab-item active" onclick="switchTab('team',this)">
                 <span class="tab-icon">👥</span>
@@ -1227,7 +1235,7 @@
                 <div class="chat-user-name" id="chatPartnerName"></div>
                 <div class="chat-user-status"></div>
             </div>
-            <div class="match-badge" id="chatMatchPct">87%</div>
+            <div class="match-badge" id="chatMatchPct"></div>
             <button onclick="switchTab('main',null)" style="background:rgba(255,255,255,0.1);border:none;color:white;padding:6px 12px;border-radius:10px;font-size:0.85rem;cursor:pointer;">🏠</button>
         </div>
 
@@ -1274,9 +1282,13 @@
 
         <!-- 하단 탭바 -->
         <div class="tab-bar">
-            <button class="tab-item" onclick="switchTab('main',this)">
+            <button class="tab-item" onclick="switchTab('main',this); loadNearby(10)">
                 <span class="tab-icon">📡</span>
-                <span class="tab-label">레이더</span>
+                <span class="tab-label">10분레이더</span>
+            </button>
+            <button class="tab-item" onclick="switchTab('main',this); loadNearby(0.5)">
+                <span class="tab-icon">🔴</span>
+                <span class="tab-label">실시간 레이더</span>
             </button>
             <button class="tab-item" onclick="switchTab('team',this)">
                 <span class="tab-icon">👥</span>
@@ -1572,7 +1584,7 @@
                         }
                         checkInviteLink();
                         showSection('mainSection');
-                        loadNearby();
+                        loadNearby(10);
                     } else {
                         showSection('setupSection');
                     }
@@ -1889,7 +1901,7 @@ async function checkTeamMatch() {
             } catch(e) { console.error(e); }
         }
 
-        async function loadNearby() {
+        async function loadNearby(minutes) {
             if (!fbUser || !fbProfile) return;
             try {
                 const myPos = await new Promise((res, rej) => {
@@ -1897,6 +1909,8 @@ async function checkTeamMatch() {
                 });
                 const myLat = myPos.coords.latitude;
                 const myLng = myPos.coords.longitude;
+                await updateDoc(doc(db, 'users', fbUser.uid), { lat: myLat, lng: myLng, lastSeen: serverTimestamp() });
+                const cutoff = new Date(Date.now() - minutes * 60 * 1000);
 
                 function calcDist(lat1, lng1, lat2, lng2) {
                     const R = 6371000;
@@ -1914,7 +1928,8 @@ async function checkTeamMatch() {
                     if (d.id !== fbUser.uid) {
                         const u = d.data();
                         const targetGender = fbProfile.gender === '남자' ? '여자' : '남자';
-                        if (u.gender === targetGender && u.lat && u.lng) {
+                        const lastSeen = u.lastSeen ? u.lastSeen.toDate() : null;
+                        if (u.gender === targetGender && u.lat && u.lng && lastSeen && lastSeen > cutoff) {
                             const dist = calcDist(myLat, myLng, u.lat, u.lng);
                             if (dist <= 500) {
                                 u.uid = d.id;
