@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    
+    <link rel="manifest" href="/kkl2026/manifest.json">
+    <meta name="theme-color" content="#FF5722">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>끌림 - 지금 근처의 인연</title>
@@ -919,15 +920,19 @@
             </div>
             <div class="feature-item">
                 <span class="feature-icon">🚫</span>
-                <div class="feature-text"><strong>30세 이하 한정</strong><br>구렁이·늑대 배척</div>
+                <div class="feature-text"><strong>30세 이하 한정</strong><br>순수한 만남 지향</div>
             </div>
             <div class="feature-item">
                 <span class="feature-icon">🎯</span>
-                <div class="feature-text"><strong>조건은 주선자만</strong><br>내 친구를 위해 내가 입력</div>
+                <div class="feature-text"><strong>조건은 주선자만</strong><br>주선자만 자료 입력</div>
             </div>
         </div>
 
-        <div style="width:100%; display:flex; flex-direction:column; gap:10px;">
+        <div class="feature-item" style="justify-content:center; margin-bottom:10px;">
+    <span class="feature-icon">📧</span>
+    <div class="feature-text">사용에 불편한 점 있으면 메일주세요.<br><strong>fbi1588@hanmail.net</strong></div>
+</div>
+<div style="width:100%; display:flex; flex-direction:column; gap:10px;">
             <button class="btn-main btn-fire" onclick="goToSetup()">🚀 회원가입 / 시작하기</button>
             <button class="btn-main btn-outline" onclick="document.getElementById('loginModal').classList.add('show')">기존 회원 로그인</button>
         </div>
@@ -1929,7 +1934,7 @@ async function checkTeamMatch() {
                         const u = d.data();
                         const targetGender = fbProfile.gender === '남자' ? '여자' : '남자';
                         const lastSeen = u.lastSeen ? u.lastSeen.toDate() : null;
-                        if (u.gender === targetGender && u.lat && u.lng && lastSeen && lastSeen > cutoff) {
+                        if (u.gender === targetGender && u.lat && u.lng) {
                             const dist = calcDist(myLat, myLng, u.lat, u.lng);
                             if (dist <= 500) {
                                 u.uid = d.id;
@@ -2165,6 +2170,11 @@ async function checkTeamMatch() {
 };
     window.hideNotify = hideNotify;
 
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/kkl2026/sw.js").catch(()=>{});
+}
 </script>
 </body>
 </html>
