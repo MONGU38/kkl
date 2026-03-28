@@ -358,7 +358,7 @@
             max-width: 480px;
             padding: 16px 24px;
             background: linear-gradient(to top, var(--dark) 60%, transparent);
-            z-index: 200;
+            z-index: 600;
         }
 
         /* ===== 메인 (레이더) 화면 ===== */
@@ -978,16 +978,7 @@
                         
                     </div>
                 </div>
-                <div class="setting-block">
-                    <div class="setting-label">거주지</div>
-                    <div class="tag-wrap">
-                        <button class="tag-btn" onclick="toggleTag(this,'myArea','서울')">서울</button>
-                        <button class="tag-btn" onclick="toggleTag(this,'myArea','인천')">인천</button>
-                        <button class="tag-btn" onclick="toggleTag(this,'myArea','경기')">경기</button>
-                        <button class="tag-btn" onclick="toggleTag(this,'myArea','부산')">부산</button>
-                        <button class="tag-btn" onclick="toggleTag(this,'myArea','기타')">기타</button>
-                    </div>
-                </div>
+                
                 <div class="setting-block">
                     <div class="setting-label">학력</div>
                     <div class="tag-wrap">
@@ -1164,26 +1155,7 @@
             </div>
         </div>
 
-        <!-- 하단 탭바 -->
-        <div class="tab-bar">
-            <button class="tab-item active" onclick="switchTab('main',this); loadNearby(10)">
-                <span class="tab-icon">📡</span>
-                <span class="tab-label">10분레이더</span>
-            </button>
-            <button class="tab-item" onclick="switchTab('main',this); loadNearby(0.5)">
-                <span class="tab-icon">🔴</span>
-                <span class="tab-label">실시간 레이더</span>
-            </button>
-            <button class="tab-item" onclick="switchTab('team',this)">
-                <span class="tab-icon">👥</span>
-                <span class="tab-label">팀 미팅</span>
-            </button>
-            <button class="tab-item" onclick="switchTab('mypage',this)">
-                <span class="tab-icon">👤</span>
-                <span class="tab-label">내 정보</span>
-            </button>
         </div>
-    </div>
 
     <!-- ===== 팀 구성 화면 ===== -->
     <div class="section" id="teamSection">
@@ -1207,26 +1179,7 @@
             </div>
         </div>
 
-        <!-- 하단 탭바 -->
-        <div class="tab-bar">
-            <button class="tab-item" onclick="switchTab('main',this); loadNearby(10)">
-                <span class="tab-icon">📡</span>
-                <span class="tab-label">10분레이더</span>
-            </button>
-            <button class="tab-item" onclick="switchTab('main',this); loadNearby(0.5)">
-                <span class="tab-icon">🔴</span>
-                <span class="tab-label">실시간 레이더</span>
-            </button>
-            <button class="tab-item active" onclick="switchTab('team',this)">
-                <span class="tab-icon">👥</span>
-                <span class="tab-label">팀 미팅</span>
-            </button>
-            <button class="tab-item" onclick="switchTab('mypage',this)">
-                <span class="tab-icon">👤</span>
-                <span class="tab-label">내 정보</span>
-            </button>
         </div>
-    </div>
 
     <!-- ===== 채팅 화면 ===== -->
     <div class="section" id="chatSection" style="flex-direction:column; height:100vh;">
@@ -1285,26 +1238,27 @@
             
         </div>
 
-        <!-- 하단 탭바 -->
-        <div class="tab-bar">
-            <button class="tab-item" onclick="switchTab('main',this); loadNearby(10)">
-                <span class="tab-icon">📡</span>
-                <span class="tab-label">10분레이더</span>
-            </button>
-            <button class="tab-item" onclick="switchTab('main',this); loadNearby(0.5)">
-                <span class="tab-icon">🔴</span>
-                <span class="tab-label">실시간 레이더</span>
-            </button>
-            <button class="tab-item" onclick="switchTab('team',this)">
-                <span class="tab-icon">👥</span>
-                <span class="tab-label">팀 미팅</span>
-            </button>
-            <button class="tab-item active" onclick="switchTab('mypage',this)">
-                <span class="tab-icon">👤</span>
-                <span class="tab-label">내 정보</span>
-            </button>
         </div>
-    </div>
+
+<!-- 하단 탭바 공통 -->
+<div class="tab-bar" id="globalTabBar">
+    <button class="tab-item active" id="tab-main" onclick="switchTab('main',this); loadNearby(10)">
+        <span class="tab-icon">📡</span>
+        <span class="tab-label">10분레이더</span>
+    </button>
+    <button class="tab-item" id="tab-realtime" onclick="switchTab('main',this); navigator.geolocation.getCurrentPosition(function(pos){ loadNearby(0.5); }, function(){}, {enableHighAccuracy:true, maximumAge:0})">
+        <span class="tab-icon">🔴</span>
+        <span class="tab-label">실시간 레이더</span>
+    </button>
+    <button class="tab-item" id="tab-team" onclick="switchTab('team',this)">
+        <span class="tab-icon">👥</span>
+        <span class="tab-label">팀 미팅</span>
+    </button>
+    <button class="tab-item" id="tab-mypage" onclick="switchTab('mypage',this)">
+        <span class="tab-icon">👤</span>
+        <span class="tab-label">내 정보</span>
+    </button>
+</div>
 
 </div><!-- /app -->
 
@@ -1535,7 +1489,7 @@
     function updateMypageDisplay() {
         const items = [
             ['성별', profile.myGender||'미설정'],['나이', profile.myAge||'미설정'],
-            ['거주지', (profile.myArea||[]).join(', ')||'미설정'],['학력', profile.myEdu||'미설정'],
+            ['학력', profile.myEdu||'미설정'],
             ['키', profile.myHeight?profile.myHeight+'cm':'미설정'],
             ['성격', (profile.myPersonality||[]).join(', ')||'미설정'],
             ['관심사', (profile.myHobby||[]).join(', ')||'미설정'],
@@ -1915,7 +1869,7 @@ async function checkTeamMatch() {
                 const myLat = myPos.coords.latitude;
                 const myLng = myPos.coords.longitude;
                 await updateDoc(doc(db, 'users', fbUser.uid), { lat: myLat, lng: myLng, lastSeen: serverTimestamp() });
-                const cutoff = new Date(Date.now() - minutes * 60 * 1000);
+                
 
                 function calcDist(lat1, lng1, lat2, lng2) {
                     const R = 6371000;
@@ -1934,7 +1888,9 @@ async function checkTeamMatch() {
                         const u = d.data();
                         const targetGender = fbProfile.gender === '남자' ? '여자' : '남자';
                         const lastSeen = u.lastSeen ? u.lastSeen.toDate() : null;
-                        if (u.gender === targetGender && u.lat && u.lng) {
+                        
+const cutoff = new Date(Date.now() - minutes * 60 * 1000);
+if (u.gender === targetGender && u.lat && u.lng && (!lastSeen || lastSeen > cutoff)) {
                             const dist = calcDist(myLat, myLng, u.lat, u.lng);
                             if (dist <= 500) {
                                 u.uid = d.id;
@@ -2060,6 +2016,8 @@ async function checkTeamMatch() {
         profile.meetStyle = fbProfile.meetStyle || '3대3';
 
         showStep(1);
+        document.getElementById('nicknameInput').closest('.setting-block').style.display = 'none';
+        document.getElementById('pwInput').closest('.setting-block').style.display = 'none';
 
         // 태그 버튼 선택 상태 복원
         restoreTagSelections();
