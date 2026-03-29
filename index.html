@@ -929,8 +929,7 @@
         </div>
 
         <div class="feature-item" style="justify-content:center; margin-bottom:10px;">
-    <span class="feature-icon">📧</span>
-    <div class="feature-text">사용에 불편한 점 있으면 메일주세요.<br><strong>fbi1588@hanmail.net</strong></div>
+    <div class="feature-text">사용에 불편한 점 있으면 메일주세요. <strong>fbi1588@hanmail.net</strong></div>
 </div>
 <div style="width:100%; display:flex; flex-direction:column; gap:10px;">
             <button class="btn-main btn-fire" onclick="goToSetup()">🚀 회원가입 / 시작하기</button>
@@ -1100,15 +1099,7 @@
                         <button class="tag-btn" onclick="toggleTag(this,'wantPersonality','섬세함')">🌸 섬세함</button>
                     </div>
                 </div>
-                <div class="setting-block">
-                    <div class="setting-label">거주지</div>
-                    <div class="tag-wrap">
-                        <button class="tag-btn" onclick="toggleTag(this,'wantArea','서울')">서울</button>
-                        <button class="tag-btn" onclick="toggleTag(this,'wantArea','인천')">인천</button>
-                        <button class="tag-btn" onclick="toggleTag(this,'wantArea','경기')">경기</button>
-                        <button class="tag-btn" onclick="toggleTag(this,'wantArea','상관없음')">상관없음</button>
-                    </div>
-                </div>
+                
                 <div class="setting-block">
                     <div class="setting-label">미팅 방식</div>
                     <div class="tag-wrap">
@@ -1498,7 +1489,7 @@
             ['나이', profile.wantAge||'미설정'],
             ['키', (profile.wantHeight||160)+'cm 이상'],['외모', profile.wantLook||'미설정'],
             ['학력', profile.wantEdu||'미설정'],['성격', (profile.wantPersonality||[]).join(', ')||'미설정'],
-            ['거주지', (profile.wantArea||[]).join(', ')||'미설정'],['미팅방식', profile.meetStyle||'3대3'],
+            ['미팅방식', profile.meetStyle||'3대3'],
         ];
         const render = arr => arr.map(([k,v]) => `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.9rem;"><span style="color:var(--text-muted)">${k}</span><span style="font-weight:600">${v}</span></div>`).join('');
         document.getElementById('myProfileDisplay').innerHTML = render(items);
