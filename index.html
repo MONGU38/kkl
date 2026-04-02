@@ -1348,6 +1348,7 @@
 
     function switchTab(tab, btn) {
         const map = { main:'mainSection', team:'teamSection', mypage:'mypageSection' };
+        if (tab === 'mypage' && !fbUser) { showSection('splashSection'); return; }
         showSection(map[tab]);
         document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
