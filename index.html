@@ -1302,7 +1302,7 @@
         nickname: '',
         myGender: '', myAge: '', myArea: [], myEdu: '',
         myHeight: 165, myBody: '', myPersonality: [], myJob: '', myHobby: [],
-        wantAge: '', wantHeight: 160,
+        wantAge: '', wantHeight: 0,
         wantLook: '', wantEdu: '', wantPersonality: [], wantArea: [],
         meetStyle: '3대3'
     };
@@ -1480,13 +1480,13 @@
         const items = [
             ['성별', profile.myGender||'미설정'],['나이', profile.myAge||'미설정'],
             ['학력', profile.myEdu||'미설정'],
-            ['키', profile.myHeight?profile.myHeight+'cm':'미설정'],
+            ['키', (profile.myHeight&&profile.myHeight!=165)?profile.myHeight+'cm':'미설정'],
             ['성격', (profile.myPersonality||[]).join(', ')||'미설정'],
             ['관심사', (profile.myHobby||[]).join(', ')||'미설정'],
         ];
         const wantItems = [
             ['나이', profile.wantAge||'미설정'],
-            ['키', (profile.wantHeight||160)+'cm 이상'],['외모', profile.wantLook||'미설정'],
+            ['키', profile.wantHeight?profile.wantHeight+'cm 이상':'미설정'],['외모', profile.wantLook||'미설정'],
             ['학력', profile.wantEdu||'미설정'],['성격', (profile.wantPersonality||[]).join(', ')||'미설정'],
             ['미팅방식', profile.meetStyle||'3대3'],
         ];
@@ -1602,7 +1602,16 @@
         };
 
         window.fbLogout = async function() {
-            if (confirm('로그아웃 하시겠습니까?')) await signOut(auth);
+            if (confirm('로그아웃 하시겠습니까?')) {
+                await signOut(auth);
+                sessionStorage.clear();
+                localStorage.clear();
+                if ('caches' in window) {
+                    const keys = await caches.keys();
+                    await Promise.all(keys.map(k => caches.delete(k)));
+                }
+                window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
+            }
         };
 
         window.fbUpdateProfile = async function() {
