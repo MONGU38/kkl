@@ -958,7 +958,7 @@
                 </div>
                 <div class="setting-block">
                     <div class="setting-label">비번 <span>* 숫자 4자리</span></div>
-                    <input class="input-field" type="password" id="pwInput" placeholder="0000" maxlength="4">
+                    <input class="input-field" type="text" id="pwInput" placeholder="0000" maxlength="4" inputmode="numeric">
                 </div>
                 <div class="setting-block">
                     <div class="setting-label">나의 성별</div>
@@ -993,11 +993,15 @@
             <div id="step2" style="display:none">
                 <div class="setting-block">
                     <div class="setting-label">키</div>
-                    <div class="range-display">
-                        <span class="range-val" id="myHeightVal">165cm</span>
+                    <div class="tag-wrap">
+                        <button class="tag-btn" onclick="selectSingle(this,'myHeight','155')">155cm</button>
+                        <button class="tag-btn" onclick="selectSingle(this,'myHeight','160')">160cm</button>
+                        <button class="tag-btn" onclick="selectSingle(this,'myHeight','165')">165cm</button>
+                        <button class="tag-btn" onclick="selectSingle(this,'myHeight','170')">170cm</button>
+                        <button class="tag-btn" onclick="selectSingle(this,'myHeight','175')">175cm</button>
+                        <button class="tag-btn" onclick="selectSingle(this,'myHeight','175+')">175cm+</button>
+                        <button class="tag-btn" onclick="selectSingle(this,'myHeight','180+')">180cm+</button>
                     </div>
-                    <input type="range" class="range-input" min="150" max="195" value="165" id="myHeightRange"
-                        oninput="document.getElementById('myHeightVal').textContent=this.value+'cm'; profile.myHeight=this.value">
                 </div>
                 <div class="setting-block">
                     <div class="setting-label">체형</div>
