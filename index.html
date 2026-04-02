@@ -1185,15 +1185,14 @@
                 <div class="chat-user-status"></div>
             </div>
             <div class="match-badge" id="chatMatchPct"></div>
-            <button onclick="switchTab('main',null)" style="background:rgba(255,255,255,0.1);border:none;color:white;padding:6px 12px;border-radius:10px;font-size:0.85rem;cursor:pointer;">🏠</button>
+            <button onclick="findNearCafe()" style="background:rgba(255,87,34,0.15);border:1px solid rgba(255,87,34,0.3);color:#FF7043;padding:6px 12px;border-radius:10px;font-size:0.85rem;cursor:pointer;">☕</button>
+<button onclick="switchTab('main',null)" style="background:rgba(255,255,255,0.1);border:none;color:white;padding:6px 12px;border-radius:10px;font-size:0.85rem;cursor:pointer;">🏠</button>
         </div>
 
         <div class="chat-messages" id="chatMessages">
             <div class="chat-system-msg">🔥 끌림이 연결해드렸습니다!</div>
         </div>
-<div style="padding:8px 16px; background:rgba(26,26,46,0.95); border-top:1px solid rgba(255,255,255,0.05); display:flex; gap:8px;">
-    <button onclick="findNearCafe()" style="flex:1; padding:10px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.3); border-radius:12px; color:#FF7043; font-size:0.85rem; font-weight:600; cursor:pointer; font-family:'Noto Sans KR',sans-serif;">☕ 근처 카페 찾기</button>
-</div>
+
         <div class="chat-input-wrap">
             <input type="text" class="chat-input" id="chatInputField" placeholder="메시지 입력..." onkeydown="if(event.key==='Enter')sendMsg()">
             <button class="send-btn" onclick="sendMsg()">▶</button>
@@ -2090,6 +2089,7 @@ if (u.gender === targetGender && u.lat && u.lng && (!lastSeen || lastSeen > cuto
         window.renderTeamPage = renderTeamPage;
         window.listenMyTeam = listenMyTeam;
     window.goToEditProfile = goToEditProfile;
+    
     window.goToSetup = goToSetup;
     window.nextStep = nextStep;
     window.prevStep = prevStep;
