@@ -1167,11 +1167,7 @@
 
             <div id="teamPageContent"></div>
 
-            <div class="bottom-fixed">
-                <button class="btn-main btn-fire" id="meetRequestBtn" disabled onclick="showNotify('🎉 매칭 시작! 상대 팀에게 요청을 보냈습니다.')">
-                    ⏳ 팀원 0/3명 모집 중
-                </button>
-            </div>
+            
         </div>
 
         </div>
@@ -1217,6 +1213,7 @@
                 <div style="font-size:1.4rem; font-weight:900;" id="mypageNick"></div>
                 <div style="color:var(--text-muted); margin-top:5px; font-size:0.9rem;">매칭 ON · 레이더 작동 중</div>
                 <button class="btn-small btn-fire" onclick="goToEditProfile()" style="margin-top:15px; padding:10px 30px;">✏️ 내 정보 수정하기</button>
+                <button class="btn-small" onclick="fbDeleteAccount()" style="margin-top:8px; padding:10px 30px; background:rgba(244,67,54,0.15);border:1px solid rgba(244,67,54,0.4);color:#ff6b6b;">🗑️ 회원 탈퇴</button>
             </div>
 
             <div style="background:rgba(255,255,255,0.04); border-radius:16px; padding:20px; margin-bottom:20px;">
@@ -1610,12 +1607,25 @@
             if (confirm('로그아웃 하시겠습니까?')) {
                 await signOut(auth);
                 sessionStorage.clear();
-                localStorage.clear();
                 if ('caches' in window) {
                     const keys = await caches.keys();
                     await Promise.all(keys.map(k => caches.delete(k)));
                 }
                 window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
+            }
+        };
+
+window.fbDeleteAccount = async function() {
+            if (!confirm('정말 탈퇴하시겠습니까? 모든 데이터가 삭제됩니다.')) return;
+            try {
+                await updateDoc(doc(db, 'users', fbUser.uid), { deleted: true });
+                const { deleteDoc: dd } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+                await dd(doc(db, 'users', fbUser.uid));
+                await fbUser.delete();
+                sessionStorage.clear();
+                window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
+            } catch(e) {
+                alert('탈퇴 중 오류: ' + e.message);
             }
         };
 
@@ -2038,6 +2048,7 @@ if (u.gender === targetGender && u.lat && u.lng && (!lastSeen || lastSeen > cuto
             ['myBody', profile.myBody],
             ['myJob', profile.myJob],
             ['myEdu', profile.myEdu],
+            ['myHeight', String(profile.myHeight)],
             ['wantAge', profile.wantAge],
             ['wantLook', profile.wantLook],
             ['wantEdu', profile.wantEdu],
@@ -2067,6 +2078,9 @@ if (u.gender === targetGender && u.lat && u.lng && (!lastSeen || lastSeen > cuto
         // 슬라이더 복원
         const heightRange = document.getElementById('myHeightRange');
         if (heightRange) { heightRange.value = profile.myHeight; document.getElementById('myHeightVal').textContent = profile.myHeight + 'cm'; }
+        document.querySelectorAll(`[onclick*="selectSingle(this,'myHeight'"]`).forEach(btn => {
+            btn.classList.toggle('on', btn.getAttribute('onclick').includes("'"+String(profile.myHeight)+"'"));
+        });
     }
 
     
