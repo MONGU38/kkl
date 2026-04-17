@@ -1951,7 +1951,7 @@ if (u.gender === targetGender && u.lat && u.lng && (!lastSeen || lastSeen > cuto
                         <div class="match-right">
                             <div class="match-pct ${u.pct>=80?'high':'mid'}">${u.pct}%</div>
                             <div class="match-dist">근처</div>
-                            <button onclick="fbOpenChat('${u.uid}','${u.nickname}','${u.pct}%')" style="margin-top:5px;background:linear-gradient(135deg,#FF5722,#FF4081);border:none;color:white;padding:5px 12px;border-radius:10px;font-size:0.8rem;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">채팅</button>
+                            <button onclick="checkTeamBeforeChat('${u.uid}','${u.nickname}','${u.pct}%')" style="margin-top:5px;background:linear-gradient(135deg,#FF5722,#FF4081);border:none;color:white;padding:5px 12px;border-radius:10px;font-size:0.8rem;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">채팅</button>
                         </div>
                     </div>`).join('');
 
@@ -1965,6 +1965,14 @@ if (u.gender === targetGender && u.lat && u.lng && (!lastSeen || lastSeen > cuto
             const overlap = (me.personality||[]).filter(p => (other.personality||[]).includes(p)).length;
             return Math.min(score + overlap * 8, 99);
         }
+window.checkTeamBeforeChat = async function(partnerUid, partnerName, matchPct) {
+            if (!myTeamId) { showNotify('⚠️ 먼저 팀을 만들고 팀원 3명을 모으세요!'); return; }
+            const teamSnap = await getDoc(doc(db, 'teams', myTeamId));
+            if (!teamSnap.exists() || (teamSnap.data().members||[]).length < 3) {
+                showNotify('⚠️ 팀원 3명이 모여야 채팅할 수 있어요!'); return;
+            }
+            window.fbOpenChat(partnerUid, partnerName, matchPct);
+        };
 
         window.fbOpenChat = async function(partnerUid, partnerName, matchPct) {
             if (!fbUser) return;
