@@ -11,15 +11,11 @@ jobs:
 
       - uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Clone TWA Quickstart
-        run: |
-          git clone https://github.com/GoogleChromeLabs/svgomg-twa.git twa-build
+        run: git clone https://github.com/GoogleChromeLabs/svgomg-twa.git twa-build
 
       - name: Configure TWA
         run: |
@@ -27,6 +23,12 @@ jobs:
           sed -i 's|https://svgomg.firebaseapp.com|https://mongu38.github.io/kkl2026|g' app/build.gradle
           sed -i 's|svgomg.firebaseapp.com|mongu38.github.io|g' app/build.gradle
           sed -i 's|com.chromestatus.svgomg|com.appwild.kkl2026|g' app/build.gradle
+
+      - name: Update Gradle wrapper
+        run: |
+          cd twa-build
+          sed -i 's|gradle-4.6-all|gradle-7.6-all|g' gradle/wrapper/gradle-wrapper.properties
+          sed -i 's|gradle-5.*-all|gradle-7.6-all|g' gradle/wrapper/gradle-wrapper.properties
 
       - name: Build AAB
         run: |
