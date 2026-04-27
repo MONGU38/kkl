@@ -9,6 +9,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - uses: android-actions/setup-android@v3
+
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
@@ -20,7 +27,9 @@ jobs:
         run: |
           mkdir twa-build
           cd twa-build
-          yes | bubblewrap init --manifest https://mongu38.github.io/kkl2026/manifest.json --skipPwaValidation
+          bubblewrap init --manifest https://mongu38.github.io/kkl2026/manifest.json --skipPwaValidation
+        env:
+          BUBBLEWRAP_ACCEPT_SYSTEM_TOOLS: true
 
       - name: Build AAB
         run: |
