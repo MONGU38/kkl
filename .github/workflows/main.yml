@@ -20,7 +20,7 @@ jobs:
         run: |
           mkdir twa-build
           cd twa-build
-          echo "Y" | bubblewrap init --manifest https://mongu38.github.io/kkl2026/manifest.json --skipPwaValidation
+          yes | bubblewrap init --manifest https://mongu38.github.io/kkl2026/manifest.json --skipPwaValidation
 
       - name: Build AAB
         run: |
