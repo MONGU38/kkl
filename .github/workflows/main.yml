@@ -1,0 +1,34 @@
+name: Build TWA AAB
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Bubblewrap
+        run: npm install -g @bubblewrap/cli
+
+      - name: Init TWA project
+        run: |
+          mkdir twa-build
+          cd twa-build
+          bubblewrap init --manifest https://mongu38.github.io/kkl2026/manifest.json --skipPwaValidation
+
+      - name: Build AAB
+        run: |
+          cd twa-build
+          bubblewrap build --skipSigning
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v3
+        with:
+          name: kkl2026-aab
+          path: twa-build/app-release-unsigned.aab
