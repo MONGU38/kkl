@@ -14,34 +14,81 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
+      - uses: android-actions/setup-android@v2
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install Bubblewrap
-        run: npm install -g @bubblewrap/cli
-
-      - name: Create TWA project
+      - name: Create TWA Android project
         run: |
-          mkdir twa-build
-          cd twa-build
-          bubblewrap init --manifest https://mongu38.github.io/kkl2026/manifest.json --skipPwaValidation --jdkPath $JAVA_HOME --androidSdkPath $ANDROID_SDK_ROOT
-        env:
-          BUBBLEWRAP_ACCEPT_SYSTEM_TOOLS: true
-          JAVA_HOME: /opt/hostedtoolcache/Java_Temurin_jdk/17.0.14-7/x64
+          mkdir -p twa/app/src/main/res/values
+          mkdir -p twa/app/src/main/java/com/appwild/kkl2026
+
+          cat > twa/settings.gradle << 'EOF'
+          include ':app'
+          EOF
+
+          cat > twa/build.gradle << 'EOF'
+          buildscript {
+              repositories { google(); mavenCentral() }
+              dependencies { classpath 'com.android.tools.build:gradle:7.4.2' }
+          }
+          allprojects { repositories { google(); mavenCentral() } }
+          EOF
+
+          cat > twa/app/build.gradle << 'EOF'
+          plugins { id 'com.android.application' }
+          android {
+              compileSdkVersion 33
+              defaultConfig {
+                  applicationId "com.appwild.kkl2026"
+                  minSdkVersion 19
+                  targetSdkVersion 33
+                  versionCode 1
+                  versionName "1.0"
+              }
+              buildTypes { release { minifyEnabled false } }
+          }
+          dependencies {
+              implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
+          }
+          EOF
+
+          cat > twa/app/src/main/AndroidManifest.xml << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.appwild.kkl2026">
+              <uses-permission android:name="android.permission.INTERNET"/>
+              <application android:label="끌림2026" android:theme="@style/AppTheme">
+                  <activity android:name="com.google.androidbrowserhelper.trusted.LauncherActivity">
+                      <meta-data android:name="android.support.customtabs.trusted.DEFAULT_URL" android:value="https://mongu38.github.io/kkl2026/"/>
+                      <intent-filter android:autoVerify="true">
+                          <action android:name="android.intent.action.MAIN"/>
+                          <category android:name="android.intent.category.LAUNCHER"/>
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          EOF
+
+          cat > twa/app/src/main/res/values/styles.xml << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar"/>
+          </resources>
+          EOF
+
+          cat > twa/gradle/wrapper/gradle-wrapper.properties << 'EOF'
+          distributionUrl=https\://services.gradle.org/distributions/gradle-7.6-bin.zip
+          EOF
+
+          mkdir -p twa/gradle/wrapper
+          cd twa
+          gradle wrapper --gradle-version 7.6
 
       - name: Build AAB
         run: |
-          cd twa-build
-          bubblewrap build --skipSigning
-        env:
-          JAVA_HOME: /opt/hostedtoolcache/Java_Temurin_jdk/17.0.14-7/x64
+          cd twa
+          ./gradlew bundleRelease
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
           name: kkl2026-aab
-          path: twa-build/app-release-unsigned.aab
+          path: twa/app/build/outputs/bundle/release/app-release.aab
