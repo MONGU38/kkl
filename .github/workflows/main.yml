@@ -14,26 +14,27 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-      - name: Install Bubblewrap
-        run: npm install -g @bubblewrap/cli
-
-      - name: Init TWA project
+      - name: Clone TWA Quickstart
         run: |
-          mkdir twa-build
+          git clone https://github.com/GoogleChromeLabs/svgomg-twa.git twa-build
+
+      - name: Configure TWA
+        run: |
           cd twa-build
-          yes | bubblewrap init --manifest https://mongu38.github.io/kkl2026/manifest.json --skipPwaValidation --jdkPath $JAVA_HOME --androidSdkPath $ANDROID_SDK_ROOT
+          sed -i 's|https://svgomg.firebaseapp.com|https://mongu38.github.io/kkl2026|g' app/build.gradle
+          sed -i 's|svgomg.firebaseapp.com|mongu38.github.io|g' app/build.gradle
+          sed -i 's|com.chromestatus.svgomg|com.appwild.kkl2026|g' app/build.gradle
 
       - name: Build AAB
         run: |
           cd twa-build
-          bubblewrap build --skipSigning
+          ./gradlew bundleRelease
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
           name: kkl2026-aab
-          path: twa-build/app-release-unsigned.aab
+          path: twa-build/app/build/outputs/bundle/release/app-release.aab
