@@ -27,16 +27,22 @@ jobs:
 
       - name: Build AAB
         run: |
+          # 1. 설정 폴더 미리 만들기
+          mkdir -p $HOME/.bubblewrap
+          
+          # 2. 매니페스트 파일을 홈으로 복사
           cp twa-manifest.json $HOME/twa-manifest.json
-          cd $HOME
+          
+          # 3. 모든 질문 무시하고 빌드 실행 (경로 지정 최적화)
           yes | bubblewrap build \
             --keystore "$GITHUB_WORKSPACE/upload-keystore.jks" \
             --keystorePassword "${{ secrets.KEYSTORE_PASSWORD }}" \
             --keyAlias upload \
-            --keyPassword "${{ secrets.KEYSTORE_PASSWORD }}"
+            --keyPassword "${{ secrets.KEYSTORE_PASSWORD }}" \
+            --skipConfig
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
           name: kkl2026-aab
-          path: ${{ github.workspace }}/app-release.aab
+          path: ./app-release.aab
