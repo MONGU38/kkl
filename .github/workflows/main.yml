@@ -29,7 +29,7 @@ jobs:
         run: |
           cp twa-manifest.json $HOME/twa-manifest.json
           cd $HOME
-          bubblewrap build \
+          yes | bubblewrap build \
             --keystore "$GITHUB_WORKSPACE/upload-keystore.jks" \
             --keystorePassword "${{ secrets.KEYSTORE_PASSWORD }}" \
             --keyAlias upload \
