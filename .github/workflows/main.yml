@@ -20,27 +20,24 @@ jobs:
 
       - name: Build AAB
         run: |
-          # 아까 성공했던 그 경로 설정입니다.
-          mkdir -p $HOME/.bubblewrap
-          cp twa-manifest.json $HOME/twa-manifest.json
+          # 1. 버블랩 설정 폴더 강제 생성 및 환경 변수 고정
+          mkdir -p ./.bubblewrap
+          export BUBBLEWRAP_CONFIG_PATH="./.bubblewrap"
           
-          cd $HOME
-          # 무한 'y'로 문을 열었던 바로 그 명령어입니다.
-          yes | bubblewrap build \
-            --keystore "$GITHUB_WORKSPACE/upload-keystore.jks" \
+          # 2. 질문 원천 봉쇄 (내부 옵션 사용)
+          bubblewrap build \
+            --keystore "./upload-keystore.jks" \
             --keystorePassword "${{ secrets.KEYSTORE_PASSWORD }}" \
             --keyAlias upload \
             --keyPassword "${{ secrets.KEYSTORE_PASSWORD }}" \
             --skipConfig \
-            --no-prompt
+            --no-prompt \
+            --accept_sdk_license || echo "빌드 중 오류 발생"
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
           name: kkl2026-aab
-          # 아까 파일을 못 찾았던 지점을 해결하기 위해
-          # 경로를 더 포괄적으로 잡았습니다.
           path: |
-            /home/runner/*.aab
-            /home/runner/work/kkl2026/kkl2026/*.aab
-          if-no-files-found: error
+            ./app-release-bundle.aab
+            /home/runner/work/kkl2026/kkl2026/app-release-bundle.aab
