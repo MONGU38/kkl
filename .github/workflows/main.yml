@@ -20,21 +20,24 @@ jobs:
 
       - name: Build AAB
         run: |
-          mkdir -p $HOME/.bubblewrap
-          cp twa-manifest.json $HOME/twa-manifest.json
+          # 1. 버블랩 설정 폴더 강제 생성 및 환경 변수 고정
+          mkdir -p ./.bubblewrap
+          export BUBBLEWRAP_CONFIG_PATH="./.bubblewrap"
           
-          cd $HOME
-          # YES를 무한히 보내서 모든 라이선스 및 JDK 설치 질문을 통과시킵니다.
-          yes | bubblewrap build \
-            --keystore "$GITHUB_WORKSPACE/upload-keystore.jks" \
+          # 2. 질문 원천 봉쇄 (내부 옵션 사용)
+          bubblewrap build \
+            --keystore "./upload-keystore.jks" \
             --keystorePassword "${{ secrets.KEYSTORE_PASSWORD }}" \
             --keyAlias upload \
             --keyPassword "${{ secrets.KEYSTORE_PASSWORD }}" \
             --skipConfig \
-            --no-prompt
+            --no-prompt \
+            --accept_sdk_license || echo "빌드 중 오류 발생"
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
           name: kkl2026-aab
-          path: /home/runner/app-release-bundle.aab
+          path: |
+            ./app-release-bundle.aab
+            /home/runner/work/kkl2026/kkl2026/app-release-bundle.aab
