@@ -20,30 +20,20 @@ jobs:
 
       - name: Build AAB
         run: |
-          # 1. 설정 폴더 생성 및 환경 변수 고정
-          mkdir -p ./.bubblewrap
-          export BUBBLEWRAP_CONFIG_PATH="./.bubblewrap"
-          
-          # 2. 파일 복사 및 위치 확인
-          cp twa-manifest.json ./twa-manifest.json
-          
-          # 3. 질문 없이 빌드 실행 (경로 문제 해결을 위해 내부 옵션 집중 사용)
-          bubblewrap build \
+          # 1. 라이선스 자동 동의 및 빌드 실행
+          # 모든 질문을 무시하고 현재 디렉토리에서 바로 빌드합니다.
+          yes | bubblewrap build \
             --keystore "./upload-keystore.jks" \
             --keystorePassword "${{ secrets.KEYSTORE_PASSWORD }}" \
             --keyAlias upload \
             --keyPassword "${{ secrets.KEYSTORE_PASSWORD }}" \
             --skipConfig \
-            --no-prompt \
-            --accept_sdk_license
+            --no-prompt
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
           name: kkl2026-aab
-          # 파일이 어디에 생성되든 모두 찾아내도록 경로를 광범위하게 지정했습니다.
-          path: |
-            ./*.aab
-            ./**/*.aab
-            /home/runner/work/kkl2026/kkl2026/*.aab
+          # 파일명을 명확히 지정하여 혼선을 방지합니다.
+          path: app-release-bundle.aab
           if-no-files-found: error
