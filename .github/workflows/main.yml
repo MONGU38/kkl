@@ -8,10 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
 
@@ -20,9 +20,13 @@ jobs:
 
       - name: Build AAB
         run: |
+          # 1. 설정 폴더 미리 생성
           mkdir -p $HOME/.bubblewrap
+          
+          # 2. 매니페스트 복사
           cp twa-manifest.json $HOME/twa-manifest.json
           
+          # 3. 질문 차단 옵션과 함께 빌드 실행
           cd $HOME
           echo "y" | bubblewrap build \
             --keystore "$GITHUB_WORKSPACE/upload-keystore.jks" \
@@ -33,7 +37,7 @@ jobs:
             --no-prompt
 
       - name: Upload AAB
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: kkl2026-aab
-          path: $HOME/app-release-bundle.aab
+          path: /home/runner/app-release-bundle.aab
