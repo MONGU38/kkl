@@ -1,12 +1,28 @@
-- name: Build AAB
+name: Build TWA AAB
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Bubblewrap
+        run: npm install -g @bubblewrap/cli
+
+      - name: Build AAB
         run: |
-          # 1. 설정 폴더 강제 생성
           mkdir -p $HOME/.bubblewrap
-          
-          # 2. 파일 복사
           cp twa-manifest.json $HOME/twa-manifest.json
           
-          # 3. 모든 질문에 "y"라고 대답하며 실행
           cd $HOME
           echo "y" | bubblewrap build \
             --keystore "$GITHUB_WORKSPACE/upload-keystore.jks" \
@@ -15,3 +31,9 @@
             --keyPassword "${{ secrets.KEYSTORE_PASSWORD }}" \
             --skipConfig \
             --no-prompt
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v3
+        with:
+          name: kkl2026-aab
+          path: $HOME/app-release-bundle.aab
