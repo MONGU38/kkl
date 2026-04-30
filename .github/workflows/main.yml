@@ -20,15 +20,12 @@ jobs:
 
       - name: Build AAB
         run: |
-          # 1. 설정 폴더 미리 생성
           mkdir -p $HOME/.bubblewrap
-          
-          # 2. 매니페스트 복사
           cp twa-manifest.json $HOME/twa-manifest.json
           
-          # 3. 질문 차단 옵션과 함께 빌드 실행
           cd $HOME
-          echo "y" | bubblewrap build \
+          # YES를 무한히 보내서 모든 라이선스 및 JDK 설치 질문을 통과시킵니다.
+          yes | bubblewrap build \
             --keystore "$GITHUB_WORKSPACE/upload-keystore.jks" \
             --keystorePassword "${{ secrets.KEYSTORE_PASSWORD }}" \
             --keyAlias upload \
