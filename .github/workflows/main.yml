@@ -1,39 +1,26 @@
 name: Build TWA AAB
-
 on:
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
-
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > ./upload-keystore.jks
       - name: Build AAB
         run: |
-          # 1. 설정 폴더 강제 생성
-          mkdir -p $HOME/.bubblewrap
-          
-          # 2. 질문 원천 봉쇄용 정답지 생성
-          cat <<EOF > $HOME/.bubblewrap/config.json
-          {
-            "jdkPath": "/usr/lib/jvm/java-17-openjdk-amd64",
-            "androidSdkPath": "/usr/local/lib/android/sdk"
-          }
-          EOF
-          
-          # 3. 빌드 실행 (yes | 삭제됨)
-          # --accept_sdk_license와 --no-prompt로 질문 차단
-          bubblewrap build \
+          mkdir -p ./.bubblewrap
+          export BUBBLEWRAP_CONFIG_PATH="./.bubblewrap"
+          yes | bubblewrap build \
             --keystore "./upload-keystore.jks" \
             --keystorePassword "${{ secrets.KEYSTORE_PASSWORD }}" \
             --keyAlias upload \
@@ -41,13 +28,10 @@ jobs:
             --skipConfig \
             --no-prompt \
             --accept_sdk_license
-          
-          # 4. 생성된 파일을 앞마당으로 강제 복사
-          find /home/runner -name "*.aab" -exec cp {} $GITHUB_WORKSPACE/ \;
-
+          find . -name "*.aab" 2>/dev/null
+          find /home/runner -name "*.aab" 2>/dev/null
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
           name: kkl2026-aab
-          path: "*.aab"
-          if-no-files-found: error
+          path: ./**/*.aab
