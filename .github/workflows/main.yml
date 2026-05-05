@@ -7,6 +7,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -20,6 +25,7 @@ jobs:
         run: |
           mkdir -p ./.bubblewrap
           export BUBBLEWRAP_CONFIG_PATH="./.bubblewrap"
+          export JAVA_HOME=$JAVA_HOME_17_X64
           yes | bubblewrap build \
             --keystore "./upload-keystore.jks" \
             --keystorePassword "${{ secrets.KEYSTORE_PASSWORD }}" \
