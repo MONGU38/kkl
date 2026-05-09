@@ -1611,7 +1611,7 @@
                     const keys = await caches.keys();
                     await Promise.all(keys.map(k => caches.delete(k)));
                 }
-                window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
+                window.location.href = '/kkl2026/?nocache=' + Date.now();
             }
         };
 
@@ -1623,7 +1623,7 @@ window.fbDeleteAccount = async function() {
                 await dd(doc(db, 'users', fbUser.uid));
                 await fbUser.delete();
                 sessionStorage.clear();
-                window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
+                window.location.href = '/kkl2026/?nocache=' + Date.now();
             } catch(e) {
                 alert('탈퇴 중 오류: ' + e.message);
             }
