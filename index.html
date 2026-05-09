@@ -1971,6 +1971,14 @@ window.checkTeamBeforeChat = async function(partnerUid, partnerName, matchPct) {
             if (!teamSnap.exists() || (teamSnap.data().members||[]).length < 3) {
                 showNotify('⚠️ 팀원 3명이 모여야 채팅할 수 있어요!'); return;
             }
+            const partnerSnap = await getDoc(doc(db, 'users', partnerUid));
+            if (!partnerSnap.exists() || !partnerSnap.data().teamId) {
+                showNotify('⚠️ 상대방이 아직 팀을 만들지 않았어요!'); return;
+            }
+            const partnerTeamSnap = await getDoc(doc(db, 'teams', partnerSnap.data().teamId));
+            if (!partnerTeamSnap.exists() || (partnerTeamSnap.data().members||[]).length < 3) {
+                showNotify('⚠️ 상대방이 아직 3명이 안 되었어요!'); return;
+            }
             window.fbOpenChat(partnerUid, partnerName, matchPct);
         };
 
@@ -2158,7 +2166,7 @@ window.checkTeamBeforeChat = async function(partnerUid, partnerName, matchPct) {
 </script>
 <script>
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/kkl2026/sw.js").catch(()=>{});
+  navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
 }
 </script>
 </body>
